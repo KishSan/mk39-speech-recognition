@@ -23,14 +23,136 @@
 
 #include "driver/gpio.h"
 #include "servoim.h"
+#include "esp_log.h"
+#include "driver/rmt_tx.h"
+#include "led_strip_encoder.h"
 
+//led control
+#define RMT_LED_STRIP_RESOLUTION_HZ 10000000 // 10MHz resolution, 1 tick = 0.1us (led strip needs a high resolution)
+#define RMT_LED_STRIP_GPIO_NUM      21
 
+#define EXAMPLE_LED_NUMBERS         16
+#define EXAMPLE_CHASE_SPEED_MS      10
+
+static const char *TAG = "example";
+
+static uint8_t led_strip_pixels[EXAMPLE_LED_NUMBERS * 3];
+
+uint32_t red = 0;
+uint32_t green = 0;
+uint32_t blue = 0;
+uint16_t hue = 0;
+uint16_t start_rgb = 0;
+
+rmt_channel_handle_t led_chan = NULL;
+rmt_tx_channel_config_t tx_chan_config;
+rmt_encoder_handle_t led_encoder = NULL;
+led_strip_encoder_config_t encoder_config;
+rmt_transmit_config_t tx_config;
+
+//
 int detect_flag = 0;
 static esp_afe_sr_iface_t *afe_handle = NULL;
 static volatile int task_flag = 0;
 srmodel_list_t *models = NULL;
 static int play_voice = -2;
 
+void led_set(){
+    tx_chan_config.clk_src = RMT_CLK_SRC_DEFAULT; // select source clock
+    tx_chan_config.gpio_num = RMT_LED_STRIP_GPIO_NUM;
+    tx_chan_config.mem_block_symbols = 256; // increase the block size can make the LED less flickering
+    tx_chan_config.resolution_hz = RMT_LED_STRIP_RESOLUTION_HZ;
+    tx_chan_config.trans_queue_depth = 4; // set the number of transactions that can be pending in the background
+    ESP_ERROR_CHECK(rmt_new_tx_channel(&tx_chan_config, &led_chan));
+
+    encoder_config.resolution = RMT_LED_STRIP_RESOLUTION_HZ;
+    ESP_ERROR_CHECK(rmt_new_led_strip_encoder(&encoder_config, &led_encoder));
+
+    ESP_ERROR_CHECK(rmt_enable(led_chan));
+
+    tx_config.loop_count = 0; // no transfer loop
+}
+
+void led_reset(){
+    // for (int j = 0; j < 48; j += 1) {
+        // Build RGB pixels
+        // led_strip_pixels[j] = 0;
+        // Flush RGB values to LEDs
+        memset(led_strip_pixels, 0, sizeof(led_strip_pixels)); 
+        ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
+        ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
+        vTaskDelay(pdMS_TO_TICKS(EXAMPLE_CHASE_SPEED_MS));
+        memset(led_strip_pixels, 0, sizeof(led_strip_pixels));     
+    // }
+}
+
+void led_process(void *arg){
+    led_reset();
+
+    for (int i = 0; i < 5; i++) {
+        for (int j = 1; j < 48; j += 3) {
+            // Build RGB pixels
+            led_strip_pixels[j] = 255;
+            // Flush RGB values to LEDs
+            ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
+            ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
+            vTaskDelay(pdMS_TO_TICKS(EXAMPLE_CHASE_SPEED_MS));
+            memset(led_strip_pixels, 0, sizeof(led_strip_pixels));     
+        }
+    }
+    led_red();
+    // led_red();
+    // led_red();
+    vTaskDelete(NULL);
+}
+
+void led_green(){
+    //Blue
+    led_reset();
+    for (int j = 0; j < 48; j += 3) {
+        led_strip_pixels[j] = 255;
+        // led_strip_pixels[47] = 255;
+        ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
+        ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
+        vTaskDelay(pdMS_TO_TICKS(EXAMPLE_CHASE_SPEED_MS));
+    }
+}
+
+void led_blue(){
+    //Blue
+    led_reset();
+    for (int j = 2; j < 48; j += 3) {
+        led_strip_pixels[j] = 255;
+        led_strip_pixels[47] = 255;
+        ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
+        ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
+        vTaskDelay(pdMS_TO_TICKS(EXAMPLE_CHASE_SPEED_MS));
+    }
+}
+
+void led_red(){
+    //Blue
+    led_reset();
+    for (int j = 1; j < 48; j += 3) {
+        led_strip_pixels[j] = 255;
+        // led_strip_pixels[47] = 255;
+        ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
+        ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
+        vTaskDelay(pdMS_TO_TICKS(EXAMPLE_CHASE_SPEED_MS));
+    }
+}
+
+void led_white(){
+    //Blue
+    led_reset();
+    for (int j = 0; j < 48; j += 1) {
+        led_strip_pixels[j] = 255;
+        // led_strip_pixels[47] = 255;
+        ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
+        ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
+        vTaskDelay(pdMS_TO_TICKS(EXAMPLE_CHASE_SPEED_MS));
+    }
+}
 
 void play_music(void *arg)
 {
@@ -98,6 +220,7 @@ void detect_Task(void *arg)
 
         if (res->wakeup_state == WAKENET_DETECTED) {
             printf("WAKEWORD DETECTED\n");
+            xTaskCreatePinnedToCore(&led_process, "led", 8 * 1024, NULL, 5, NULL, 1);
 	    multinet->clean(model_data);
         } else if (res->wakeup_state == WAKENET_CHANNEL_VERIFIED) {
             play_voice = -1;
@@ -125,22 +248,39 @@ void detect_Task(void *arg)
                     switch (mn_result->command_id[0])
                     {
                         case 0:
-                            
+                            //open helmet
+                            servo_open();
                             detect_flag = 2;
                             printf("on\n");
+                            vTaskDelay(80);
                             gpio_reset_pin(38);
                             gpio_set_direction(38, GPIO_MODE_OUTPUT);
                             gpio_set_level(38, 0);
+                            servo_reset();
+                            led_white();
                             break;
                         
                         case 1:
+                            //zaboka protocol
+                            led_green();
+                            break;
+
+                        case 2:
                             //close helmet
-                            servo_main();
+                            // servo_reset();
+                            // vTaskDelay(10);
+                            servo_close();
                             detect_flag = 2;
                             printf("off\n");
+                            vTaskDelay(100);
                             gpio_reset_pin(38);
                             gpio_set_direction(38, GPIO_MODE_OUTPUT);
                             gpio_set_level(38, 1);
+                            led_blue();
+                            servo_reset();
+                            break;
+
+                        default:
                             break;
                     }
                 }
@@ -169,6 +309,9 @@ void detect_Task(void *arg)
 
 void app_main()
 {
+    led_set();
+    servo_init();
+
     models = esp_srmodel_init("model"); // partition label defined in partitions.csv
     ESP_ERROR_CHECK(esp_board_init(AUDIO_HAL_16K_SAMPLES, 1, 16));
     // ESP_ERROR_CHECK(esp_sdcard_init("/sdcard", 10));

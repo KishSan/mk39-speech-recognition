@@ -2,11 +2,11 @@ set(srcs
     main.c
     speech_commands_action.c
     servoim.c
+    led_strip_encoder.c
     )
 
 set(requires
     esp-sr
-    led_strip
     hardware_driver
     )
 
