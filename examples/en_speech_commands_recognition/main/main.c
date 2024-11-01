@@ -252,7 +252,7 @@ void detect_Task(void *arg)
                             servo_open();
                             detect_flag = 2;
                             printf("on\n");
-                            vTaskDelay(80);
+                            vTaskDelay(50);
                             gpio_reset_pin(38);
                             gpio_set_direction(38, GPIO_MODE_OUTPUT);
                             gpio_set_level(38, 0);
@@ -272,7 +272,7 @@ void detect_Task(void *arg)
                             servo_close();
                             detect_flag = 2;
                             printf("off\n");
-                            vTaskDelay(100);
+                            vTaskDelay(50);
                             gpio_reset_pin(38);
                             gpio_set_direction(38, GPIO_MODE_OUTPUT);
                             gpio_set_level(38, 1);

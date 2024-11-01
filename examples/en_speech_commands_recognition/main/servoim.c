@@ -59,7 +59,7 @@ servo_init(void){
         timer_config.period_ticks = SERVO_TIMEBASE_PERIOD;
         timer_config.count_mode = MCPWM_TIMER_COUNT_MODE_UP;
     // };
-    mcpwm_new_timer(&timer_config, &timer);
+    ESP_ERROR_CHECK(mcpwm_new_timer(&timer_config, &timer));
 
     // mcpwm_timer_handle_t timer2 = NULL;
         timer2_config.group_id = 1;
@@ -144,9 +144,9 @@ servo_init(void){
 
 servo_reset(){
     mcpwm_timer_start_stop(timer, MCPWM_TIMER_STOP_FULL);
-    mcpwm_timer_start_stop(timer, MCPWM_TIMER_STOP_FULL);
-    mcpwm_timer_disable(timer);
-    mcpwm_timer_disable(timer2);
+    mcpwm_timer_start_stop(timer2, MCPWM_TIMER_STOP_FULL);
+    // mcpwm_timer_disable(timer);
+    // mcpwm_timer_disable(timer2);
 
     // mcpwm_del_generator(generator);
     // mcpwm_del_generator(generator2);
@@ -162,45 +162,20 @@ servo_reset(){
 
 void servo_close(void)
 {
-    // servo_init();
-
-    ///////////////////////////////////////
-    
-    
-
-    // set the initial compare value, so that the servo will spin to the center position
-    //open
-    // ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(comparator, example_angle_to_compare(0)));
-    // ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(comparator2, example_angle_to_compare(90)));
-
-    // vTaskDelay(pdMS_TO_TICKS(3000));
-
     //close
-    ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(comparator, example_angle_to_compare(120)));
-    ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(comparator2, example_angle_to_compare(-50)));
+    ESP_ERROR_CHECK(mcpwm_timer_start_stop(timer, MCPWM_TIMER_START_NO_STOP));
+    ESP_ERROR_CHECK(mcpwm_timer_start_stop(timer2, MCPWM_TIMER_START_NO_STOP));
+
+    ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(comparator, example_angle_to_compare(60)));
+    ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(comparator2, example_angle_to_compare(-60)));
 }
 
 void servo_open(void)
 {
-    // servo_init();
-
-    ///////////////////////////////////////
-    // ESP_LOGI(TAG, "Enable and start timer");
-    // ESP_ERROR_CHECK(mcpwm_timer_enable(timer));
-    // ESP_ERROR_CHECK(mcpwm_timer_start_stop(timer, MCPWM_TIMER_START_NO_STOP));
-
-    // ESP_LOGI(TAG, "Enable and start timer");
-    // ESP_ERROR_CHECK(mcpwm_timer_enable(timer2));
-    // ESP_ERROR_CHECK(mcpwm_timer_start_stop(timer2, MCPWM_TIMER_START_NO_STOP));
-
-    // set the initial compare value, so that the servo will spin to the center position
     //open
-    // ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(comparator, example_angle_to_compare(0)));
-    // ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(comparator2, example_angle_to_compare(90)));
-
-    // vTaskDelay(pdMS_TO_TICKS(3000));
-
-    //open
-    ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(comparator, example_angle_to_compare(-20)));
+    ESP_ERROR_CHECK(mcpwm_timer_start_stop(timer, MCPWM_TIMER_START_NO_STOP));
+    ESP_ERROR_CHECK(mcpwm_timer_start_stop(timer2, MCPWM_TIMER_START_NO_STOP));
+    
+    ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(comparator, example_angle_to_compare(-90)));
     ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(comparator2, example_angle_to_compare(90)));
 }
