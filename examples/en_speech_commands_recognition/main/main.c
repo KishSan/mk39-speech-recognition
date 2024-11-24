@@ -100,54 +100,18 @@ void led_process(void *arg){
             memset(led_strip_pixels, 0, sizeof(led_strip_pixels));     
         }
     }
-    led_red();
-    // led_red();
-    // led_red();
+    led_color(0, 100 , 0);
     vTaskDelete(NULL);
 }
 
-void led_green(){
-    //Blue
-    led_reset();
-    for (int j = 0; j < 48; j += 3) {
-        led_strip_pixels[j] = 255;
-        // led_strip_pixels[47] = 255;
-        ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
-        ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
-        vTaskDelay(pdMS_TO_TICKS(EXAMPLE_CHASE_SPEED_MS));
-    }
-}
-
-void led_blue(){
-    //Blue
-    led_reset();
-    for (int j = 2; j < 48; j += 3) {
-        led_strip_pixels[j] = 255;
-        led_strip_pixels[47] = 255;
-        ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
-        ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
-        vTaskDelay(pdMS_TO_TICKS(EXAMPLE_CHASE_SPEED_MS));
-    }
-}
-
-void led_red(){
-    //Blue
-    led_reset();
-    for (int j = 1; j < 48; j += 3) {
-        led_strip_pixels[j] = 255;
-        // led_strip_pixels[47] = 255;
-        ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
-        ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
-        vTaskDelay(pdMS_TO_TICKS(EXAMPLE_CHASE_SPEED_MS));
-    }
-}
-
-void led_white(){
-    //Blue
+void led_color(uint8_t g, uint8_t r, uint8_t b){
+    //RGB Color
     led_reset();
     for (int j = 0; j < 48; j += 1) {
-        led_strip_pixels[j] = 255;
-        // led_strip_pixels[47] = 255;
+        led_strip_pixels[j] = g;
+        led_strip_pixels[j+1] = r;
+        led_strip_pixels[j+2] = b;
+        j+=2;
         ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
         ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
         vTaskDelay(pdMS_TO_TICKS(EXAMPLE_CHASE_SPEED_MS));
@@ -251,18 +215,19 @@ void detect_Task(void *arg)
                             //open helmet
                             servo_open();
                             detect_flag = 2;
-                            printf("on\n");
-                            vTaskDelay(50);
+                            printf("Open Sequence\n");
+                            vTaskDelay(70);
                             gpio_reset_pin(38);
                             gpio_set_direction(38, GPIO_MODE_OUTPUT);
                             gpio_set_level(38, 0);
+                            led_color(50, 50, 0);
                             servo_reset();
-                            led_white();
+                            esp_restart();
                             break;
                         
                         case 1:
                             //zaboka protocol
-                            led_green();
+                            led_color(100, 0, 0);
                             break;
 
                         case 2:
@@ -271,12 +236,12 @@ void detect_Task(void *arg)
                             // vTaskDelay(10);
                             servo_close();
                             detect_flag = 2;
-                            printf("off\n");
+                            printf("Close Sequence\n");
                             vTaskDelay(50);
                             gpio_reset_pin(38);
                             gpio_set_direction(38, GPIO_MODE_OUTPUT);
                             gpio_set_level(38, 1);
-                            led_blue();
+                            led_color(0, 0, 100);
                             servo_reset();
                             break;
 

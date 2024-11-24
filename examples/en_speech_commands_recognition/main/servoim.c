@@ -9,8 +9,9 @@
 #include "esp_log.h"
 #include "driver/mcpwm_prelude.h"
 #include "servoim.h"
+#include "esp_system.h"
 
-static const char *TAG = "example";
+static const char *TAG = "MK39";
 
 // Please consult the datasheet of your servo before changing the following parameters
 #define SERVO_MIN_PULSEWIDTH_US 500  // Minimum pulse width in microsecond
@@ -145,23 +146,25 @@ servo_init(void){
 servo_reset(){
     mcpwm_timer_start_stop(timer, MCPWM_TIMER_STOP_FULL);
     mcpwm_timer_start_stop(timer2, MCPWM_TIMER_STOP_FULL);
-    // mcpwm_timer_disable(timer);
-    // mcpwm_timer_disable(timer2);
+    mcpwm_timer_disable(timer);
+    mcpwm_timer_disable(timer2);
 
-    // mcpwm_del_generator(generator);
-    // mcpwm_del_generator(generator2);
-    // mcpwm_del_comparator(comparator);
-    // mcpwm_del_comparator(comparator2);
-    // mcpwm_del_operator(oper);
-    // mcpwm_del_operator(oper2);
-    // mcpwm_del_timer(timer);
-    // mcpwm_del_timer(timer2);
-    // gpio_reset_pin(SERVO1_PULSE_GPIO);
-    // gpio_reset_pin(SERVO2_PULSE_GPIO);
+    mcpwm_del_generator(generator);
+    mcpwm_del_generator(generator2);
+    mcpwm_del_comparator(comparator);
+    mcpwm_del_comparator(comparator2);
+    mcpwm_del_operator(oper);
+    mcpwm_del_operator(oper2);
+    mcpwm_del_timer(timer);
+    mcpwm_del_timer(timer2);
+    gpio_reset_pin(SERVO1_PULSE_GPIO);
+    gpio_reset_pin(SERVO2_PULSE_GPIO);
 }
 
 void servo_close(void)
 {
+    servo_init();
+
     //close
     ESP_ERROR_CHECK(mcpwm_timer_start_stop(timer, MCPWM_TIMER_START_NO_STOP));
     ESP_ERROR_CHECK(mcpwm_timer_start_stop(timer2, MCPWM_TIMER_START_NO_STOP));
@@ -172,6 +175,8 @@ void servo_close(void)
 
 void servo_open(void)
 {
+    servo_init();
+
     //open
     ESP_ERROR_CHECK(mcpwm_timer_start_stop(timer, MCPWM_TIMER_START_NO_STOP));
     ESP_ERROR_CHECK(mcpwm_timer_start_stop(timer2, MCPWM_TIMER_START_NO_STOP));
