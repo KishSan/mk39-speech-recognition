@@ -118,6 +118,84 @@ void led_color(uint8_t g, uint8_t r, uint8_t b){
     }
 }
 
+void led_cycle(void *arg){
+    //RGB Color
+    led_reset();
+    for(int loop=0; loop<10; loop++){
+        for(int c=0; c<100; c++){
+            for (int j = 0; j < 48; j += 1) {
+                led_strip_pixels[j] = 0;
+                led_strip_pixels[j+1] = c;
+                led_strip_pixels[j+2] = 0;
+                j+=2;
+                ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
+                ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
+            }
+        }
+        for(int c=0; c<100; c++){
+            for (int j = 0; j < 48; j += 1) {
+                led_strip_pixels[j] = c;
+                led_strip_pixels[j+1] = 100;
+                led_strip_pixels[j+2] = 0;
+                j+=2;
+                ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
+                ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
+            }
+        }
+        for(int c=0; c<100; c++){
+            for (int j = 0; j < 48; j += 1) {
+                led_strip_pixels[j] = 100;
+                led_strip_pixels[j+1] = 100-c;
+                led_strip_pixels[j+2] = 0;
+                j+=2;
+                ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
+                ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
+            }
+        }
+        for(int c=0; c<100; c++){
+            for (int j = 0; j < 48; j += 1) {
+                led_strip_pixels[j] = 100;
+                led_strip_pixels[j+1] = 0;
+                led_strip_pixels[j+2] = c;
+                j+=2;
+                ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
+                ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
+            }
+        }
+        for(int c=0; c<100; c++){
+            for (int j = 0; j < 48; j += 1) {
+                led_strip_pixels[j] = 100-c;
+                led_strip_pixels[j+1] = 0;
+                led_strip_pixels[j+2] = 100;
+                j+=2;
+                ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
+                ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
+            }
+        }
+        for(int c=0; c<100; c++){
+            for (int j = 0; j < 48; j += 1) {
+                led_strip_pixels[j] = 0;
+                led_strip_pixels[j+1] = c;
+                led_strip_pixels[j+2] = 100;
+                j+=2;
+                ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
+                ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
+            }
+        }
+        for(int c=0; c<100; c++){
+            for (int j = 0; j < 48; j += 1) {
+                led_strip_pixels[j] = 0;
+                led_strip_pixels[j+1] = 100-c;
+                led_strip_pixels[j+2] = 100-c;
+                j+=2;
+                ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
+                ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
+            }
+        }
+    }
+    vTaskDelete(NULL);
+}
+
 void play_music(void *arg)
 {
     while (task_flag) {
@@ -243,6 +321,12 @@ void detect_Task(void *arg)
                             gpio_set_level(38, 1);
                             led_color(0, 0, 100);
                             servo_reset();
+                            break;
+
+                        case 3:
+                            detect_flag = 2;
+                            printf("Christmas Protocol\n");
+                            xTaskCreatePinnedToCore(&led_cycle, "ledcycle", 8 * 1024, NULL, 5, NULL, 1);
                             break;
 
                         default:
