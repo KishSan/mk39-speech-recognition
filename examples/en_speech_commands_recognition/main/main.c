@@ -99,6 +99,9 @@ void led_process(void *arg){
             vTaskDelay(pdMS_TO_TICKS(EXAMPLE_CHASE_SPEED_MS));
             memset(led_strip_pixels, 0, sizeof(led_strip_pixels));     
         }
+        gpio_reset_pin(38);
+        gpio_set_direction(38, GPIO_MODE_OUTPUT);
+        gpio_set_level(38, (i%2));
     }
     led_color(0, 100 , 0);
     vTaskDelete(NULL);
