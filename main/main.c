@@ -17,7 +17,6 @@
 #include "esp_mn_iface.h"
 #include "esp_mn_models.h"
 #include "esp_board_init.h"
-#include "speech_commands_action.h"
 #include "model_path.h"
 #include "esp_process_sdkconfig.h"
 
@@ -75,16 +74,12 @@ void led_set(){
 }
 
 void led_reset(){
-    // for (int j = 0; j < 48; j += 1) {
-        // Build RGB pixels
-        // led_strip_pixels[j] = 0;
-        // Flush RGB values to LEDs
+        //memset entire range instead of using a loop
         memset(led_strip_pixels, 0, sizeof(led_strip_pixels)); 
         ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
         ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
         vTaskDelay(pdMS_TO_TICKS(EXAMPLE_CHASE_SPEED_MS));
         memset(led_strip_pixels, 0, sizeof(led_strip_pixels));     
-    // }
 }
 
 void led_color(uint8_t g, uint8_t r, uint8_t b){
@@ -195,26 +190,6 @@ void led_cycle(void *arg){
                 ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
                 ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
             }
-        }
-    }
-    vTaskDelete(NULL);
-}
-
-void play_music(void *arg)
-{
-    while (task_flag) {
-        switch (play_voice) {
-        case -2:
-            vTaskDelay(10);
-            break;
-        case -1:
-            wake_up_action();
-            play_voice = -2;
-            break;
-        default:
-            speech_commands_action(play_voice);
-            play_voice = -2;
-            break;
         }
     }
     vTaskDelete(NULL);
@@ -368,9 +343,6 @@ void app_main()
     models = esp_srmodel_init("model"); // partition label defined in partitions.csv
     ESP_ERROR_CHECK(esp_board_init(AUDIO_HAL_16K_SAMPLES, 1, 16));
     // ESP_ERROR_CHECK(esp_sdcard_init("/sdcard", 10));
-#if defined CONFIG_ESP32_KORVO_V1_1_BOARD
-    led_init();
-#endif
 
 #if CONFIG_IDF_TARGET_ESP32
     printf("This demo only support ESP32S3\n");
@@ -381,14 +353,6 @@ void app_main()
 
     afe_config_t afe_config = AFE_CONFIG_DEFAULT();
     afe_config.wakenet_model_name = esp_srmodel_filter(models, ESP_WN_PREFIX, NULL);;
-#if defined CONFIG_ESP32_S3_BOX_BOARD || defined CONFIG_ESP32_S3_EYE_BOARD || CONFIG_ESP32_S3_DEVKIT_C
-    afe_config.aec_init = false;
-    #if defined CONFIG_ESP32_S3_EYE_BOARD || CONFIG_ESP32_S3_DEVKIT_C
-        afe_config.pcm_config.total_ch_num = 2;
-        afe_config.pcm_config.mic_num = 1;
-        afe_config.pcm_config.ref_num = 1;
-    #endif
-#endif
     esp_afe_sr_data_t *afe_data = afe_handle->create_from_config(&afe_config);
 
     task_flag = 1;
