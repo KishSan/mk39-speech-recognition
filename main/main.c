@@ -34,7 +34,7 @@
 #define EXAMPLE_LED_NUMBERS         16
 #define EXAMPLE_CHASE_SPEED_MS      10
 
-static const char *TAG = "example";
+static const char *TAG = "MK39";
 
 static uint8_t led_strip_pixels[EXAMPLE_LED_NUMBERS * 3];
 
