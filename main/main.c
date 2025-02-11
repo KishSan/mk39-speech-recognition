@@ -26,6 +26,7 @@
 #include "esp_log.h"
 #include "driver/rmt_tx.h"
 #include "led_strip_encoder.h"
+#include <string.h>
 
 //led control
 #define RMT_LED_STRIP_RESOLUTION_HZ 10000000 // 10MHz resolution, 1 tick = 0.1us (led strip needs a high resolution)
@@ -86,6 +87,20 @@ void led_reset(){
     // }
 }
 
+void led_color(uint8_t g, uint8_t r, uint8_t b){
+    //RGB Color
+    led_reset();
+    for (int j = 0; j < 48; j += 1) {
+        led_strip_pixels[j] = g;
+        led_strip_pixels[j+1] = r;
+        led_strip_pixels[j+2] = b;
+        j+=2;
+        ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
+        ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
+        vTaskDelay(pdMS_TO_TICKS(EXAMPLE_CHASE_SPEED_MS));
+    }
+}
+
 void led_process(void *arg){
     led_reset();
 
@@ -105,20 +120,6 @@ void led_process(void *arg){
     }
     led_color(0, 100 , 0);
     vTaskDelete(NULL);
-}
-
-void led_color(uint8_t g, uint8_t r, uint8_t b){
-    //RGB Color
-    led_reset();
-    for (int j = 0; j < 48; j += 1) {
-        led_strip_pixels[j] = g;
-        led_strip_pixels[j+1] = r;
-        led_strip_pixels[j+2] = b;
-        j+=2;
-        ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
-        ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
-        vTaskDelay(pdMS_TO_TICKS(EXAMPLE_CHASE_SPEED_MS));
-    }
 }
 
 void led_cycle(void *arg){
@@ -393,12 +394,6 @@ void app_main()
     task_flag = 1;
     xTaskCreatePinnedToCore(&detect_Task, "detect", 8 * 1024, (void*)afe_data, 5, NULL, 1);
     xTaskCreatePinnedToCore(&feed_Task, "feed", 8 * 1024, (void*)afe_data, 5, NULL, 0);
-#if defined  CONFIG_ESP32_S3_KORVO_1_V4_0_BOARD
-    xTaskCreatePinnedToCore(&led_Task, "led", 2 * 1024, NULL, 5, NULL, 0);
-#endif
-#if defined  CONFIG_ESP32_S3_KORVO_1_V4_0_BOARD || CONFIG_ESP32_S3_KORVO_2_V3_0_BOARD || CONFIG_ESP32_KORVO_V1_1_BOARD  || CONFIG_ESP32_S3_BOX_BOARD
-    xTaskCreatePinnedToCore(&play_music, "play", 4 * 1024, NULL, 5, NULL, 1);
-#endif
 
     // // You can call afe_handle->destroy to destroy AFE.
     // task_flag = 0;

@@ -1,6 +1,5 @@
 set(srcs
     main.c
-    speech_commands_action.c
     servoim.c
     led_strip_encoder.c
     )

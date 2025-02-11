@@ -8,6 +8,7 @@
 #include "freertos/task.h"
 #include "esp_log.h"
 #include "driver/mcpwm_prelude.h"
+#include "driver/gpio.h"
 #include "servoim.h"
 #include "esp_system.h"
 
@@ -41,7 +42,7 @@ mcpwm_gen_handle_t generator2;
 mcpwm_timer_config_t timer_config;
 mcpwm_timer_config_t timer2_config;
 
-servo_init(void){
+void servo_init(void){
     timer = NULL;
     timer2 = NULL;
     oper = NULL;
@@ -143,7 +144,7 @@ servo_init(void){
     ESP_ERROR_CHECK(mcpwm_timer_start_stop(timer2, MCPWM_TIMER_START_NO_STOP));
 }
 
-servo_reset(){
+void servo_reset(){
     mcpwm_timer_start_stop(timer, MCPWM_TIMER_STOP_FULL);
     mcpwm_timer_start_stop(timer2, MCPWM_TIMER_STOP_FULL);
     mcpwm_timer_disable(timer);

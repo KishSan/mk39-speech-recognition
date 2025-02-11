@@ -1,61 +1,58 @@
-# [Note] This branch has some modifications to make it work on the Generic board, ESP32-S3-Devkit-C and INMP441 mems microphone.
-  
-## Quick Start with ESP-Skainet for Generic ESP32-S3 DevKit-C 
-
-### Pre-requisite
-
-Now this project runs on IDF version 5.x.
-
-### ESP-Skainet
-
-Make sure you have cloned my project branch with the '--branch'.
-Also, need to get all submodules so don't forget the option '--recursive'.
-
-```
-git clone --branch ESP32-S3-Devkit-C --recursive git@github.com:0015/esp-skainet.git
-```
-
-### Example that can be operated in ESP32-DevKit-C and INMP441 
-
-1. Set your I2s microphone settings 
-
-```
-cd esp-skainet/components/hardware_driver/boards/include
-```
-
-Open the file, 'esp32_s3_devkit_c.h'
-```
-#define FUNC_I2S_EN         (1)
-#define GPIO_I2S_LRCK       (GPIO_NUM_11)
-#define GPIO_I2S_MCLK       (GPIO_NUM_NC)
-#define GPIO_I2S_SCLK       (GPIO_NUM_12)
-#define GPIO_I2S_SDIN       (GPIO_NUM_10)
-#define GPIO_I2S_DOUT       (GPIO_NUM_NC)
-``` 
-
-Modify them for your system.
+# English Speech Commands Recognition
 
 
-2. Navigate to one example folder 'esp-skainet/examples/en_speech_commands_recognition'.
-```
-cd ../../../../examples/en_speech_commands_recognition/
-```
 
-3. Set Target and Choose your hardware board
+(See the [README.md](../README.md) file in the upper level 'examples' directory for more information about examples.)
+
+## How to use this example
+
+
+### Additional Hardware Required
+
+\- A Speaker
+
+### Configure, Build and Flash
+
+
+##### set-target 
+
 ```
 idf.py set-target esp32s3
-idf.py menuconfig
-```
-Audio hardware board
--> ESP32-S3-DEVKIT-C
-
-4. Build and flash the project.
-```
-idf.py build
-idf.py flash monitor
 ```
 
-5. Advanced users can add or modify speech commands by using the `idf.py menuconfig` command. 
+##### configure
+
+Select the default sdkconfig according to the development board module
+
+For example:  
+
 ```
-idf.py menuconfig
+cp sdkconfig.defaults.esp32s3 sdkconfig
+```
+
+##### build&flash
+
+Build the project and flash it to the board, then run the monitor tool to view the output via serial port:
+
+```
+idf.py -b 2000000 flash monitor 
+```
+
+(To exit the serial monitor, type ``Ctrl-]``.)
+
+### Modify speech commands
+
+We recommend using MultiNet6 or newer models.   
+Here's a simple example to modify speech commands in the code.  
+You can also modify the default command list, please refer to [document](https://docs.espressif.com/projects/esp-sr/en/latest/esp32s3/speech_command_recognition/README.html) for more details.
+
+```
+// MultiNet6
+    // Note: Please create multinet handle before adding speech commands
+
+    esp_mn_commands_clear();                       // Clear commands that already exist 
+    esp_mn_commands_add(1, "turn on the light");   // add a command
+    esp_mn_commands_add(2, "turn off the light");  // add a command
+    esp_mn_commands_update();                      // update commands
+    multinet->print_active_speech_commands(model_data);     // print active commands
 ```
