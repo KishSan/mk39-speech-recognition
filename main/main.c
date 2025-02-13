@@ -270,7 +270,7 @@ void detect_Task(void *arg)
                     {
                         case 0:
                             //open helmet
-                            servo_open();
+                            helmet_open();
                             detect_flag = 2;
                             printf("Open Sequence\n");
                             vTaskDelay(70);
@@ -278,20 +278,18 @@ void detect_Task(void *arg)
                             gpio_set_direction(38, GPIO_MODE_OUTPUT);
                             gpio_set_level(38, 0);
                             led_color(50, 50, 0);
-                            servo_reset();
-                            esp_restart();
+                            // servo_reset();
+                            // esp_restart();
                             break;
                         
                         case 1:
-                            //zaboka protocol
+                            //hulk out
                             led_color(100, 0, 0);
                             break;
 
                         case 2:
                             //close helmet
-                            // servo_reset();
-                            // vTaskDelay(10);
-                            servo_close();
+                            helmet_close();
                             detect_flag = 2;
                             printf("Close Sequence\n");
                             vTaskDelay(50);
@@ -299,7 +297,7 @@ void detect_Task(void *arg)
                             gpio_set_direction(38, GPIO_MODE_OUTPUT);
                             gpio_set_level(38, 1);
                             led_color(0, 0, 100);
-                            servo_reset();
+                            // servo_reset();
                             break;
 
                         case 3:
