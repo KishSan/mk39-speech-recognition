@@ -19,13 +19,14 @@
 #include "esp_board_init.h"
 #include "model_path.h"
 #include "esp_process_sdkconfig.h"
-
 #include "driver/gpio.h"
-#include "servoim.h"
 #include "esp_log.h"
 #include "driver/rmt_tx.h"
-#include "ledim.h"
 #include <string.h>
+
+// specific includes for iron man suit control
+#include "led_im.h"
+#include "servo_im.h"
 
 //led control
 #define RMT_LED_STRIP_RESOLUTION_HZ 10000000 // 10MHz resolution, 1 tick = 0.1us (led strip needs a high resolution)

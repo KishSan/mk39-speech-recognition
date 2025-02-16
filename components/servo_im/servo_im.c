@@ -9,8 +9,10 @@
 #include "esp_log.h"
 #include "driver/gpio.h"
 #include "driver/ledc.h"
-#include "servoim.h"
 #include "esp_system.h"
+
+// specific includes for iron man suit control
+#include "servo_im.h"
 #include "iot_servo.h"
 
 static const char *TAG = "MK39";

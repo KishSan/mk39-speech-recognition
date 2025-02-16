@@ -5,8 +5,8 @@ set(srcs
 set(requires
     esp-sr
     hardware_driver
-    servoim
-    ledim
+    servo_im
+    led_im
     )
 
 idf_component_register(SRCS ${srcs}

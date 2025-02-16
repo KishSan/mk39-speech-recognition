@@ -5,7 +5,9 @@
  */
 
 #include "esp_check.h"
-#include "ledim.h"
+
+// specific includes for iron man suit control
+#include "led_im.h"
 
 static const char *TAG = "led_encoder";
 
