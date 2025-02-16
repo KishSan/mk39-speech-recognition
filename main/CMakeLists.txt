@@ -3,7 +3,6 @@ set(srcs
     )
 
 set(requires
-    esp-sr
     hardware_driver
     servo_im
     led_im

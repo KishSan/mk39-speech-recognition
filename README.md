@@ -20,14 +20,14 @@ Due to the nature of the project, the framework was stripped down to only contai
 * Servo control using LEDC
 * Addressable LED control using RMT drivers
 
-The final revision of this code base works with the ESP32-S3 N8R8 module. Different variations will need to be configured in the SDK using the menuconfig option.
+The final revision of this code base was tested on both the ESP32-S3 N8R8 and ESP32-S3 N16R8 modules. Different variations will need to be configured in the SDK using the menuconfig option.
 
 ### Additional Hardware Required
 
 * INMP 441 MEMS Microphone
-    * This addition is reaquired for the speech input when using the DevKit modules
+    * This addition is required for the speech input when using the DevKit modules
 
-### Setting up the ESP-IDF environment
+## Setting up the ESP-IDF environment
 Development for this project was done with the ESP-IDF v5.0.8 extension in VSCode. Testing was done on later versions but there are compatibality issues with some of the modules that I have not resolved yet. 
 
 Further details on setting up the IDF environment can be found here and is outside the scope of this documentation.
@@ -35,7 +35,7 @@ Further details on setting up the IDF environment can be found here and is outsi
 
 Once the environment has been configured and setup properly you can test by opening an ESP-IDF terminal. This can be accessed from the extension on the left in VSCode, which will open a terminal and run the export script to set environment variables among other setting needed for development.
 
-### Configure, Build and Flash
+## Configure, Build and Flash
 
 Once the ESP-IDF development environment has been set up, we can begin configuring and flashing the project.
 ##### set-target 
@@ -83,7 +83,7 @@ idf.py monitor
 
 (To exit the serial monitor, type ``Ctrl-]``.)
 
-### Modify speech commands
+## Modify speech commands
 
 We recommend using MultiNet6 or newer models.   
 Here's a simple example to modify speech commands in the code.  
@@ -91,19 +91,34 @@ You can also modify the default command list, please refer to [document](https:/
 
 ```
 // MultiNet6
-    // Note: Please create multinet handle before adding speech commands
+// Note: Please create multinet handle before adding speech commands
 
-    esp_mn_commands_clear();                       // Clear commands that already exist 
-    esp_mn_commands_add(1, "turn on the light");   // add a command
-    esp_mn_commands_add(2, "turn off the light");  // add a command
-    esp_mn_commands_update();                      // update commands
-    multinet->print_active_speech_commands(model_data);     // print active commands
+esp_mn_commands_clear();                       // Clear commands that already exist 
+esp_mn_commands_add(1, "turn on the light");   // add a command
+esp_mn_commands_add(2, "turn off the light");  // add a command
+esp_mn_commands_update();                      // update commands
+multinet->print_active_speech_commands(model_data);     // print active commands
 ```
 
 
-### Modifying Wake Word
+## Modifying Wake Word
 
-There will be changes done to the esp-sr framework which is what skainet uses for the wake words and command recognition. Updating to the latest framework version can provide additional wake words when needed.
+There will be changes done to the ESP-SR framework which is what skainet uses for the wake words and command recognition. Updating to the latest framework version can provide additional wake words and features when needed.
 
 [ESP-SR Framework](https://github.com/espressif/esp-sr)
 
+For this project, the ESP-SR has been included as a managed component. To add future functionality to the framework, the version can be modified in the following file:
+```
+main\idf_component.yml
+```
+
+Caution!
+When upgrading to the ESP-SR v2.0.0 framework, migration steps need to be implemented. Some of the AFE implementations in this project have been removed in the latest version. You can view the migration documentation here:
+
+[ESP-SR v2.0.0 Migration](https://docs.espressif.com/projects/esp-sr/en/latest/esp32s3/audio_front_end/migration_guide.html)
+
+## Future Functional Improvements
+
+Future project scope include:
+* ESP-SR v2.0.0 compatibility
+* ESP-IDF v5.4 compatibility

@@ -429,6 +429,16 @@ CONFIG_PARTITION_TABLE_MD5=y
 # end of Partition Table
 
 #
+# Audio Media HAL
+#
+# CONFIG_ESP32_S3_BOX_BOARD is not set
+# CONFIG_ESP32_S3_KORVO_1_V4_0_BOARD is not set
+# CONFIG_ESP32_S3_KORVO_2_V3_0_BOARD is not set
+# CONFIG_ESP32_S3_EYE_BOARD is not set
+CONFIG_ESP32_S3_DEVKIT_C=y
+# end of Audio Media HAL
+
+#
 # ESP Speech Recognition
 #
 CONFIG_MODEL_IN_FLASH=y
@@ -461,7 +471,11 @@ CONFIG_SR_WN_WN9_JARVIS_TTS=y
 # CONFIG_SR_WN_WN9_HEYWANDA_TTS is not set
 # CONFIG_SR_WN_WN9_HIMIAOMIAO_TTS is not set
 # CONFIG_SR_WN_WN9_XIAOBINXIAOBIN_TTS is not set
+# CONFIG_SR_WN_WN9_HAIXIAOWU_TTS is not set
 # CONFIG_SR_WN_WN9_ASTROLABE_TTS is not set
+# CONFIG_SR_WN_WN9_XIAOYAXIAOYA_TTS2 is not set
+# CONFIG_SR_WN_WN9_HIJASON_TTS2 is not set
+# CONFIG_SR_WN_WN9_LINAIBAN_TTS2 is not set
 # CONFIG_SR_WN_WN9_CUSTOMWORD is not set
 # CONFIG_SR_WN_LOAD_MULIT_WORD is not set
 CONFIG_USE_MULTINET=y
@@ -681,16 +695,6 @@ CONFIG_EN_SPEECH_COMMAND_ID198=""
 CONFIG_EN_SPEECH_COMMAND_ID199=""
 # end of Add English speech commands
 # end of ESP Speech Recognition
-
-#
-# Audio Media HAL
-#
-# CONFIG_ESP32_S3_BOX_BOARD is not set
-# CONFIG_ESP32_S3_KORVO_1_V4_0_BOARD is not set
-# CONFIG_ESP32_S3_KORVO_2_V3_0_BOARD is not set
-# CONFIG_ESP32_S3_EYE_BOARD is not set
-CONFIG_ESP32_S3_DEVKIT_C=y
-# end of Audio Media HAL
 
 #
 # Compiler options
