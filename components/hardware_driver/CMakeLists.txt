@@ -25,13 +25,11 @@ endif()
 idf_component_register(
     SRC_DIRS
         ./
-        "./led"
         ${BSP_BOARD_SRC}
     INCLUDE_DIRS
         "include"
         "codec/include"
         "boards/include"
-        "./led/include"
     REQUIRES
         driver
         fatfs
