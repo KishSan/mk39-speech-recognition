@@ -1,12 +1,12 @@
 set(srcs
     main.c
-    servoim.c
     led_strip_encoder.c
     )
 
 set(requires
     esp-sr
     hardware_driver
+    servoim
     )
 
 idf_component_register(SRCS ${srcs}
