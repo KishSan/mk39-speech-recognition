@@ -24,7 +24,7 @@
 #include "servoim.h"
 #include "esp_log.h"
 #include "driver/rmt_tx.h"
-#include "led_strip_encoder.h"
+#include "ledim.h"
 #include <string.h>
 
 //led control

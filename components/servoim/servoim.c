@@ -62,7 +62,7 @@ void helmet_open(void *arg)
     // one clockwise and the other counterclockwise for the same angle
     iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 1, 180);
     // delay while waiting for action to complete
-    vTaskDelay(300 /  portTICK_PERIOD_MS);
+    vTaskDelay(500 /  portTICK_PERIOD_MS);
     // to avoid excessive strain on motors, kill the signal
     iot_servo_deinit(LEDC_LOW_SPEED_MODE);
 }
