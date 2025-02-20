@@ -1,5 +1,5 @@
 # MK39 Offline Voice Command Control System
-
+![MK39](assets/cover.jpg)
 ## Overview
 
 This repository contains code build off the ESP-SKAINET framework which was designed specifically to be used on the following boards:
@@ -24,6 +24,22 @@ Due to the nature of the project, the framework was stripped down to only contai
 * Addressable LED control using RMT drivers
 
 The final revision of this code base was tested on both the ESP32-S3 N8R8 and ESP32-S3 N16R8 modules. Different variations will need to be configured in the SDK using the menuconfig option.
+
+## Included Demo Features
+The system will boot, awaiting an activation command. This repo has been pre-configured for 'JARVIS' as the activation command. Multiple activation commands can be set as well to use various wake words for system control.
+
+![Activation](assets/start.png)
+
+If no command is issued within a certain time, a timeout will occur and return to a waiting state. At this point an activation command can be issued again.
+
+![Timeout](assets/timeout.png)
+
+Example sequences are displayed for Opening and Closing the helmet. Phrases are matched based on various probabilities so similar words may cause conflicts.
+
+![Open](assets/open.png)
+
+![Close](assets/close.png)
+
 
 ## Additional Hardware Required
 
