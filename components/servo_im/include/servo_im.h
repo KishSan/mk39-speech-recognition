@@ -1,9 +1,8 @@
-#ifndef SERVOIM_H
-#define SERVOIM_H
+#ifndef SERVO_IM_H
+#define SERVO_IM_H
 
 void servo_init(void);
-void servo_reset(void);
-void servo_close(void);
-void servo_open(void);
+void helmet_close(void);
+void helmet_open(void);
 
 #endif
