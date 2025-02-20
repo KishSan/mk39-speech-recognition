@@ -124,15 +124,16 @@ void detect_Task(void *arg)
                             helmet_open();
                             detect_flag = 2;
                             printf("Open Sequence\n");
+                            //allow time for helmet to open
                             vTaskDelay(50 / portTICK_PERIOD_MS);
-                            gpio_reset_pin(38);
-                            gpio_set_direction(38, GPIO_MODE_OUTPUT);
-                            gpio_set_level(38, 0);
+                            led_eye_control(0);
+                            //change reactor and jetpack color to yellow
                             led_color(50, 50, 0);
                             break;
                         
                         case 1:
                             //hulk out
+                            //change reactor and jetpack color to green
                             led_color(100, 0, 0);
                             break;
 
@@ -141,10 +142,10 @@ void detect_Task(void *arg)
                             helmet_close();
                             detect_flag = 2;
                             printf("Close Sequence\n");
+                            //allow time for helmet to close
                             vTaskDelay(50 / portTICK_PERIOD_MS);
-                            gpio_reset_pin(38);
-                            gpio_set_direction(38, GPIO_MODE_OUTPUT);
-                            gpio_set_level(38, 1);
+                            led_eye_control(1);
+                            //change reactor and jetpack color to blue
                             led_color(0, 0, 100);
                             break;
 

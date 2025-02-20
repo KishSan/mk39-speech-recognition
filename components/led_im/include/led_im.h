@@ -17,6 +17,7 @@ void led_set();
 void led_reset();
 void led_color(uint8_t g, uint8_t r, uint8_t b);
 void led_process(void *arg);
+void led_eye_control(uint8_t level);
 
 /**
  * @brief Type of led strip encoder configuration

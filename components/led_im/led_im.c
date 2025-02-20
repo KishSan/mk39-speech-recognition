@@ -170,7 +170,7 @@ void led_reset(){
         ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
         ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
         vTaskDelay(pdMS_TO_TICKS(EXAMPLE_CHASE_SPEED_MS));
-        memset(led_strip_pixels, 0, sizeof(led_strip_pixels));     
+        memset(led_strip_pixels, 0, sizeof(led_strip_pixels));
 }
 
 void led_color(uint8_t g, uint8_t r, uint8_t b){
@@ -189,7 +189,7 @@ void led_color(uint8_t g, uint8_t r, uint8_t b){
 
 void led_process(void *arg){
     led_reset();
-
+    gpio_set_direction(38, GPIO_MODE_OUTPUT);
     for (int i = 0; i < 5; i++) {
         for (int j = 1; j < 48; j += 3) {
             // Build RGB pixels
@@ -200,10 +200,17 @@ void led_process(void *arg){
             vTaskDelay(pdMS_TO_TICKS(EXAMPLE_CHASE_SPEED_MS));
             memset(led_strip_pixels, 0, sizeof(led_strip_pixels));     
         }
-        gpio_reset_pin(38);
-        gpio_set_direction(38, GPIO_MODE_OUTPUT);
+        //flash eye leds
         gpio_set_level(38, (i%2));
     }
     led_color(0, 100 , 0);
     vTaskDelete(NULL);
+}
+
+void led_eye_control(uint8_t level){
+    //clear GPIO state in case of reboot or other operation
+    gpio_reset_pin(38);
+    gpio_set_direction(38, GPIO_MODE_OUTPUT);
+    //toggle on/off
+    gpio_set_level(38, level);
 }
