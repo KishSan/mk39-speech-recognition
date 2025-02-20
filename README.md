@@ -12,7 +12,7 @@ This repository contains code build off the ESP-SKAINET framework which was desi
 The GitHub repository can be found here:
 * [ESP-Skainet Framework](https://github.com/espressif/esp-skainet)
 
-Modifications were needed to the framework to work with DevKit modules. Special thanks to this repository for getting this to work with the Development modules:
+Modifications were needed to the framework to work with DevKit modules. Special thanks to Eric for this repository that enables us to work with the DevKit modules:
 * [ESP-Skainet framework modification for ESP32-S3 DevKitC](https://github.com/0015/esp-skainet/tree/ESP32-S3-Devkit-C)
 
 Due to the nature of the project, the framework was stripped down to only contain necessary modules for this application. Features including:
@@ -22,10 +22,29 @@ Due to the nature of the project, the framework was stripped down to only contai
 
 The final revision of this code base was tested on both the ESP32-S3 N8R8 and ESP32-S3 N16R8 modules. Different variations will need to be configured in the SDK using the menuconfig option.
 
-### Additional Hardware Required
+## Additional Hardware Required
 
 * INMP 441 MEMS Microphone
     * This addition is required for the speech input when using the DevKit modules
+
+### Configuring the GPIOs for the INMP Module
+* Navigate to the folder:
+    * mk39-speech-recognition\components\hardware_driver\boards\include\'
+    * Edit the file 'esp32_s3_devkit_c.h'
+* Edit the following fields depending on the configuration of your INMP module. Refer to the pinout diagram for a proper port selection for these inputs if you choose a different layout.
+
+```
+/**
+ * @brief ESP32-S3-DEVKIT-C I2S GPIO defination
+ * 
+ */
+#define FUNC_I2S_EN         (1)
+#define GPIO_I2S_LRCK       (GPIO_NUM_11)
+#define GPIO_I2S_MCLK       (GPIO_NUM_NC)
+#define GPIO_I2S_SCLK       (GPIO_NUM_12)
+#define GPIO_I2S_SDIN       (GPIO_NUM_10)
+#define GPIO_I2S_DOUT       (GPIO_NUM_NC)
+```
 
 ## Setting up the ESP-IDF environment
 Development for this project was done with the ESP-IDF v5.0.8 extension in VSCode. Testing was done on later versions but there are compatibality issues with some of the modules that I have not resolved yet. 
@@ -38,6 +57,13 @@ Once the environment has been configured and setup properly you can test by open
 ## Configure, Build and Flash
 
 Once the ESP-IDF development environment has been set up, we can begin configuring and flashing the project.
+
+Before you begin, ensure that you are in the project root:
+```
+'mk39-speech-recognition\' 
+or your specific project folder name
+```
+
 ##### set-target 
 
 This is important to compile the proper binaries for the device you are using. Since the sdkconfig file included in this repo is specific for the esp32s3, it should work out of the box.
