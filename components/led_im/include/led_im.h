@@ -8,9 +8,15 @@
 #include <stdint.h>
 #include "driver/rmt_encoder.h"
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+void led_set();
+void led_reset();
+void led_color(uint8_t g, uint8_t r, uint8_t b);
+void led_process(void *arg);
 
 /**
  * @brief Type of led strip encoder configuration

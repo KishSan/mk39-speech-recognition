@@ -12,10 +12,9 @@
 #include "esp_system.h"
 
 // specific includes for iron man suit control
-#include "servo_im.h"
 #include "iot_servo.h"
 
-static const char *TAG = "MK39";
+static const char *TAG = "MK39 Servo Control";
 
 #define SERVO1_PULSE_GPIO             4        // GPIO connects to the PWM signal line
 #define SERVO2_PULSE_GPIO             5        // GPIO connects to the PWM signal line
@@ -48,7 +47,7 @@ void servo_init(void)
     iot_servo_init(LEDC_LOW_SPEED_MODE, &servo_helmet_cfg);
 }
 
-void helmet_open(void *arg)
+void helmet_open(void)
 {
     // servos will be disabled after each motion to 
     // avoid overheating due to misalignment in printed parts
@@ -69,7 +68,7 @@ void helmet_open(void *arg)
     iot_servo_deinit(LEDC_LOW_SPEED_MODE);
 }
 
-void helmet_close(void *arg)
+void helmet_close(void)
 {
     // servos will be disabled after each motion to 
     // avoid overheating due to misalignment in printed parts
