@@ -10,7 +10,7 @@ dependencies:
       type: service
     version: 1.4.12
   espressif/esp-sr:
-    component_hash: 9b41fd5ae5960c393bfd3559cd6e5fa2a95c0bf833915cebafe57fb8c4e4c396
+    component_hash: 38b84064516d122c21121319e6df1e101fa7bf276da0f68246ea1c10d154f816
     dependencies:
     - name: espressif/esp-dsp
       registry_url: https://components.espressif.com
@@ -22,7 +22,7 @@ dependencies:
     source:
       registry_url: https://components.espressif.com/
       type: service
-    version: 1.9.5
+    version: 2.0.0
   espressif/servo:
     component_hash: 309c787e48224255fad458cfd9ab86ea53f0fdad1c5e4f6f0c50309990b17108
     dependencies:
@@ -41,6 +41,6 @@ direct_dependencies:
 - espressif/esp-sr
 - espressif/servo
 - idf
-manifest_hash: 790f39e5111280a26ddded3608a57a5bbb97cf357064cdeeecebc84eb592f540
+manifest_hash: e897ca5a3ef3dfb7e9da75784146d3dc29f8804809c7e14a12df707ed528684c
 target: esp32s3
 version: 2.0.0
