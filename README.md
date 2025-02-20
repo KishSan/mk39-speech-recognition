@@ -9,7 +9,9 @@ This repository contains code build off the ESP-SKAINET framework which was desi
  * ESP32-S3-EYE
  * ESP32-P4-Function-EV
 
-The GitHub repository can be found here:
+The purpose of this repo is to start with a simplified speech recognition framework that will be easy to update and add future functionality. The features and concepts included here are meant to be used across various robotics projects.
+
+The GitHub repository for the official framework can be found here:
 * [ESP-Skainet Framework](https://github.com/espressif/esp-skainet)
 
 Modifications were needed to the framework to work with DevKit modules. Special thanks to Eric for this repository that enables us to work with the DevKit modules:
@@ -148,3 +150,4 @@ When upgrading to the ESP-SR v2.0.0 framework, migration steps need to be implem
 Future project scope include:
 * ESP-SR v2.0.0 compatibility
 * ESP-IDF v5.4 compatibility
+* Voice playback functionality (TTS)
