@@ -46,14 +46,14 @@ void feed_Task(void *arg)
     esp_afe_sr_data_t *afe_data = afe_task_info->afe_data;
 
     int audio_chunksize = afe_handle->get_feed_chunksize(afe_data);
-    int nch = afe_handle->get_channel_num(afe_data);
+    int nch = afe_handle->get_feed_channel_num(afe_data);
     int feed_channel = esp_get_feed_channel();
-    assert(nch <= feed_channel);
+    assert(nch == feed_channel);
     int16_t *i2s_buff = malloc(audio_chunksize * sizeof(int16_t) * feed_channel);
     assert(i2s_buff);
 
     while (task_flag) {
-        esp_get_feed_data(false, i2s_buff, audio_chunksize * sizeof(int16_t) * feed_channel);
+        esp_get_feed_data(true, i2s_buff, audio_chunksize * sizeof(int16_t) * feed_channel);
 
         afe_handle->feed(afe_data, i2s_buff);
     }
@@ -64,12 +64,12 @@ void feed_Task(void *arg)
     vTaskDelete(NULL);
 }
 
-void fetch_Task(void *arg)
+void detect_Task(void *arg)
 {
     afe_task_into_t *afe_task_info = (afe_task_into_t *)arg;
     esp_afe_sr_iface_t *afe_handle = afe_task_info->afe_handle;
     esp_afe_sr_data_t *afe_data = afe_task_info->afe_data;
-
+    
     int afe_chunksize = afe_handle->get_fetch_chunksize(afe_data);
     char *mn_name = esp_srmodel_filter(models, ESP_MN_PREFIX, ESP_MN_ENGLISH);
     printf("multinet:%s\n", mn_name);
@@ -91,8 +91,9 @@ void fetch_Task(void *arg)
 
         if (res->wakeup_state == WAKENET_DETECTED) {
             printf("WAKEWORD DETECTED\n");
-            xTaskCreatePinnedToCore(&led_process, "led", 8 * 1024, NULL, 5, NULL, 1);
-	    multinet->clean(model_data);
+            multinet->clean(model_data);
+            //custom task to process chest reactor LEDs
+            xTaskCreatePinnedToCore(&led_process, "led", 8 * 1024, NULL, 5, NULL, 1);	    
         } else if (res->wakeup_state == WAKENET_CHANNEL_VERIFIED) {
             play_voice = -1;
             detect_flag = 1;
@@ -123,7 +124,7 @@ void fetch_Task(void *arg)
                             helmet_open();
                             detect_flag = 2;
                             printf("Open Sequence\n");
-                            vTaskDelay(70);
+                            vTaskDelay(50 / portTICK_PERIOD_MS);
                             gpio_reset_pin(38);
                             gpio_set_direction(38, GPIO_MODE_OUTPUT);
                             gpio_set_level(38, 0);
@@ -140,7 +141,7 @@ void fetch_Task(void *arg)
                             helmet_close();
                             detect_flag = 2;
                             printf("Close Sequence\n");
-                            vTaskDelay(50);
+                            vTaskDelay(50 / portTICK_PERIOD_MS);
                             gpio_reset_pin(38);
                             gpio_set_direction(38, GPIO_MODE_OUTPUT);
                             gpio_set_level(38, 1);
@@ -189,7 +190,7 @@ void app_main()
 #if CONFIG_IDF_TARGET_ESP32
     printf("This demo only support ESP32S3\n");
     return;
-#else
+#else 
     // M - Microphone channel
     // R - Playback reference channel
     // N - Unused or unknown channel
@@ -198,7 +199,7 @@ void app_main()
     esp_afe_sr_iface_t *afe_handle = esp_afe_handle_from_config(afe_config);
 #endif
 
-    afe_config->wakenet_model_name = esp_srmodel_filter(models, ESP_WN_PREFIX, NULL);;
+    afe_config->wakenet_model_name = esp_srmodel_filter(models, ESP_WN_PREFIX, NULL);
 #if defined CONFIG_ESP32_S3_BOX_BOARD || defined CONFIG_ESP32_S3_EYE_BOARD || CONFIG_ESP32_S3_DEVKIT_C
     afe_config->aec_init = false;
     #if defined CONFIG_ESP32_S3_EYE_BOARD || CONFIG_ESP32_S3_DEVKIT_C
@@ -207,6 +208,7 @@ void app_main()
         afe_config->pcm_config.ref_num = 1;
     #endif
 #endif
+
     esp_afe_sr_data_t *afe_data = afe_handle->create_from_config(afe_config);
     afe_task_into_t task_info;
     task_info.afe_data = afe_data;
@@ -214,7 +216,8 @@ void app_main()
     task_info.feed_task = NULL;
     task_info.fetch_task = NULL;
     task_flag = 1;
-    xTaskCreatePinnedToCore(&fetch_Task, "fetch", 8 * 1024, (void*)&task_info, 5, NULL, 1);
+
+    xTaskCreatePinnedToCore(&detect_Task, "detect", 8 * 1024, (void*)&task_info, 5, NULL, 1);
     xTaskCreatePinnedToCore(&feed_Task, "feed", 8 * 1024, (void*)&task_info, 5, NULL, 0);
 
     // // You can call afe_handle->destroy to destroy AFE.

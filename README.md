@@ -19,7 +19,8 @@ Modifications were needed to the framework to work with DevKit modules. Special 
 
 Due to the nature of the project, the framework was stripped down to only contain necessary modules for this application. Features including:
 * English speech recognition
-* Servo control using LEDC
+* Servo control using LEDC (8 channels)
+    * MCPWM implementation has been removed but can be used for additional channels if needed.
 * Addressable LED control using RMT drivers
 
 The final revision of this code base was tested on both the ESP32-S3 N8R8 and ESP32-S3 N16R8 modules. Different variations will need to be configured in the SDK using the menuconfig option.
@@ -139,15 +140,16 @@ For this project, the ESP-SR has been included as a managed component. To add fu
 ```
 main\idf_component.yml
 ```
+The current version of ESP-SR in this build is v2.0.0 which brings several improvements to the AFE and adds additional features such as noise supression.
 
-Caution!
-When upgrading to the ESP-SR v2.0.0 framework, migration steps need to be implemented. Some of the AFE implementations in this project have been removed in the latest version. You can view the migration documentation here:
+Note that the v2 AFE interface is not compatible with ESP-SR versions 1.x.x. The migration procedure has been implemented in this build so you will only be able to use v2.x.x
 
-[ESP-SR v2.0.0 Migration](https://docs.espressif.com/projects/esp-sr/en/latest/esp32s3/audio_front_end/migration_guide.html)
+You can view the changelog here to stay up to date on the latest features.
+
+[ESP-SR Changelog](https://github.com/espressif/esp-sr/blob/master/CHANGELOG.md)
 
 ## Future Functional Improvements
 
 Future project scope include:
-* ESP-SR v2.0.0 compatibility
-* ESP-IDF v5.4 compatibility
+* ESP-IDF v5.4 compatibility (and later versions)
 * Voice playback functionality (TTS)
