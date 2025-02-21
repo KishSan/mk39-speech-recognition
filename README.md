@@ -40,11 +40,18 @@ Example sequences are displayed for Opening and Closing the helmet. Phrases are 
 
 ![Close](assets/close.png)
 
-
 ## Additional Hardware Required
 
 * INMP 441 MEMS Microphone
     * This addition is required for the speech input when using the DevKit modules
+
+## Default GPIO Configuration
+```
+Helmet Servo 1      - GPIO 4
+Helmet Servo 2      - GPIO 5
+Eye LED             - GPIO 38
+Addressable LEDs    - GPIO 21
+```
 
 ### Configuring the GPIOs for the INMP Module
 * Navigate to the folder:
@@ -104,6 +111,15 @@ Manual SDK changes can be done through menuconfig:
 ```
 idf.py menuconfig
 ```
+
+#### Configuring Command Words
+To generate phonemes for your input phrases, navigate to the folder:
+* "mk39-speech-recognition\managed_components\espressif__esp-sr\tool"
+* Execute the command:
+```
+    python .\multinet_g2p.py -t "Custom Phrase"
+```
+* You will need python and necessary dependencies installed to run the script. Refer to the ESP-SR documentation on setting this up.
 
 To reset the framework configurations to the default configuration for the ESP32-S3 module, use the following command example to copy the pre-existing defaults to the 'sdkconfig' file.
 
