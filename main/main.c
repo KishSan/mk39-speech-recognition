@@ -179,6 +179,7 @@ void detect_Task(void *arg)
 void app_main()
 {
     led_set();
+    sr_servo_init();
 
     models = esp_srmodel_init("model"); // partition label defined in partitions.csv
     ESP_ERROR_CHECK(esp_board_init(AUDIO_HAL_16K_SAMPLES, 1, 16));
