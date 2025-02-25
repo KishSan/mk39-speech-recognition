@@ -39,7 +39,7 @@ servo_config_t servo_helmet_cfg = {
     .channel_number = 2,
 };
 
-void servo_init(void)
+void sr_servo_init(void)
 {
     ESP_LOGI(TAG, "Servo Setup");
 
@@ -52,7 +52,7 @@ void helmet_open(void)
     // servos will be disabled after each motion to 
     // avoid overheating due to misalignment in printed parts
     // initialize on each action
-    servo_init();
+    sr_servo_init(LEDC_LOW_SPEED_MODE, &servo_helmet_cfg);
 
     ESP_LOGI(TAG, "Open Sequence");
 
@@ -73,7 +73,7 @@ void helmet_close(void)
     // servos will be disabled after each motion to 
     // avoid overheating due to misalignment in printed parts
     // initialize on each action
-    servo_init();
+    sr_servo_init(LEDC_LOW_SPEED_MODE, &servo_helmet_cfg);
 
     ESP_LOGI(TAG, "Close Sequence");
 
