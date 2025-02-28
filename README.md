@@ -73,7 +73,7 @@ Addressable LEDs    - GPIO 21
 ```
 
 ## Setting up the ESP-IDF environment
-Development for this project was done with the ESP-IDF v5.0.8 extension in VSCode. Testing was done on later versions but there are compatibality issues with some of the modules that I have not resolved yet. 
+Development for this project was done with the ESP-IDF extension in VSCode. It was developed to support up to ESP-IDF v5.4. There is also a side branch with older v5.0.8 support.
 
 Further details on setting up the IDF environment can be found here and is outside the scope of this documentation.
 * [ESP-IDF Guide](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/get-started/index.html)
@@ -183,5 +183,4 @@ You can view the changelog here to stay up to date on the latest features.
 ## Future Functional Improvements
 
 Future project scope include:
-* ESP-IDF v5.4 compatibility (and later versions)
 * Voice playback functionality (TTS)

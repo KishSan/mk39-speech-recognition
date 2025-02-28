@@ -39,7 +39,7 @@ servo_config_t servo_helmet_cfg = {
     .channel_number = 2,
 };
 
-void servo_init(void)
+void sr_servo_init(void)
 {
     ESP_LOGI(TAG, "Servo Setup");
 
@@ -52,7 +52,8 @@ void helmet_open(void)
     // servos will be disabled after each motion to 
     // avoid overheating due to misalignment in printed parts
     // initialize on each action
-    servo_init();
+    
+    ledc_timer_resume(LEDC_LOW_SPEED_MODE, LEDC_TIMER_0);
 
     ESP_LOGI(TAG, "Open Sequence");
 
@@ -65,7 +66,7 @@ void helmet_open(void)
     // delay while waiting for action to complete
     vTaskDelay(500 /  portTICK_PERIOD_MS);
     // to avoid excessive strain on motors, kill the signal
-    iot_servo_deinit(LEDC_LOW_SPEED_MODE);
+    ledc_timer_pause(LEDC_LOW_SPEED_MODE, LEDC_TIMER_0);
 }
 
 void helmet_close(void)
@@ -73,7 +74,7 @@ void helmet_close(void)
     // servos will be disabled after each motion to 
     // avoid overheating due to misalignment in printed parts
     // initialize on each action
-    servo_init();
+    ledc_timer_resume(LEDC_LOW_SPEED_MODE, LEDC_TIMER_0);
 
     ESP_LOGI(TAG, "Close Sequence");
 
@@ -86,5 +87,6 @@ void helmet_close(void)
     // delay while waiting for action to complete
     vTaskDelay(300 /  portTICK_PERIOD_MS);
     // to avoid excessive strain on motors, kill the signal
-    iot_servo_deinit(LEDC_LOW_SPEED_MODE);
+
+    ledc_timer_pause(LEDC_LOW_SPEED_MODE, LEDC_TIMER_0);
 }
