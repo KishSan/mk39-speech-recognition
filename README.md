@@ -4,7 +4,7 @@
 
 For video instructions on using this repository, kindly check out my YouTube channel where I will post tutorials and other information on various project.
 
-[YouTube Channel](https://www.youtube.com/@KishSan) \
+[YouTube Channel](https://www.youtube.com/@CraftyLittleHobbits) \
 [Link to Instructional Video](https://www.youtube.com/watch?v=_AuPDKQoaPo)
 
 This repository contains code build off the ESP-SKAINET framework which was designed specifically to be used on the following boards:
